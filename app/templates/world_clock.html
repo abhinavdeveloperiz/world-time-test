@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Clock</title>
+</head>
+<body>
+    <div class="text-center">
+        <h2>Preset Time Zones</h2>
+        {% for zone, time in times.items %}
+            <p><strong>{{ zone }}</strong>: {{ time }}</p>
+        {% endfor %}
+        
+        <h2>Your Local Time</h2>
+        <p id="user-time">Detecting your time zone...</p>
+    </div>
+
+    <script>
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        fetch('/get-user-time/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ timezone: userTimezone })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.time) {
+                document.getElementById("user-time").innerText = `${data.timezone}: ${data.time}`;
+            } else {
+                document.getElementById("user-time").innerText = "Could not detect your time.";
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById("user-time").innerText = "Error detecting time.";
+        });
+    </script>
+</body>
+</html>
