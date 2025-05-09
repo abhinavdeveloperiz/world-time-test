@@ -6,16 +6,7 @@ import pytz
 import json
 
 def world_clock_view(request):
-    world_clock = WorldClock.objects.first()
-
-    timezones = ['Asia/Kolkata', 'Asia/Dubai']
-    times = {}
-    for tz in timezones:
-        timezone_obj = pytz.timezone(tz)
-        converted_time = world_clock.uk_time.astimezone(timezone_obj)
-        times[tz] = converted_time.strftime('%I:%M %p')
-
-    return render(request, 'world_clock.html', {'times': times})
+    return render(request, 'world_clock.html',)
 
 @csrf_exempt
 def get_user_time(request):
